@@ -186,18 +186,19 @@
             }
         });
 
-        toggleHtmlButton.addEventListener('click', () => {
-            if (editor.style.display === 'none') {
-                editor.style.display = 'block';
-                htmlCode.style.display = 'none';
-                toggleHtmlButton.textContent = '顯示原始碼';
-            } else {
-                editor.style.display = 'none';
-                htmlCode.style.display = 'block';
-                toggleHtmlButton.textContent = '顯示編輯器';
-                htmlCode.value = editor.innerHTML;
-            }
-        });
+toggleHtmlButton.addEventListener('click', () => {
+    if (editor.style.display === 'none') {
+        editor.style.display = 'block';
+        htmlCode.style.display = 'none';
+        toggleHtmlButton.textContent = '顯示原始碼';
+        editor.innerHTML = htmlCode.value;  // 這行是新加入的，它會將textarea的內容設定到editor中。
+    } else {
+        editor.style.display = 'none';
+        htmlCode.style.display = 'block';
+        toggleHtmlButton.textContent = '顯示編輯器';
+        htmlCode.value = editor.innerHTML;
+    }
+});
 
         previewButton.addEventListener('click', () => {
             const previewContent = editor.innerHTML;
