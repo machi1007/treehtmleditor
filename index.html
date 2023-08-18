@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px; /* 給予略微的邊距 */
+            padding: 0;
+            background-image: url('1.png'); /* 設定背景圖片 */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #f5f5f5;
+        }
+        #editor-container {
+            border: 1px solid #ccc;
+            background-color: white;
+            width: calc(100% - 40px); /* 考慮左右兩邊的20px空間 */
+            max-width: 800px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto; /* 使編輯器在寬度超過800px時保持中心對齊 */
+        }
+        #editor {
+            min-height: calc(100vh - 100px); /* 考慮上下邊距和其他元素的空間 */
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <title>大樹Html簡易編輯器</title>
+</head>
+<body>
+
+    
+    <div id="editor-container">
+<div style="text-align: center;"><h1>大樹Html簡易編輯器</h1></div>
+        <div>
+            <button id="toggleHtmlButton">顯示原始碼</button>
+            <button id="orderedListButton">有序清單</button>
+            <button id="unorderedListButton">無序清單</button>
+            <button id="boldButton">粗體</button>
+            <button id="italicButton">斜體</button>
+            <button id="underlineButton">底線</button>
+            <button id="fontSizeButton">字體大小</button>
+            <button id="fontColorButton">字體顏色</button>
+            <button id="bgColorButton">背景顏色</button>
+            <button id="colorCodesButton">顏色代碼</button>
+            <button id="emojiButton">表情符號</button>
+            <button id="linkButton">插入連結</button>
+            <button id="unlinkButton">取消連結</button>
+            <button id="clearFormatButton">清除格式</button>
+            <button id="insertImageButton">插入圖片</button>
+            <button id="alignLeftButton">置左</button>
+            <button id="alignCenterButton">置中</button>
+            <button id="alignRightButton">置右</button>
+            <button id="previewButton">預覽</button>
+        </div>
+        
+        <div>
+            <div id="editor" contenteditable="true">
+                <!-- 初始文字內容 -->
+                嗨，這是你的編輯內容。
+            </div>
+            <textarea id="htmlCode" rows="10" style="display: none;"></textarea>
+        </div>
+    </div>
+    
+    <script>
+        const boldButton = document.getElementById('boldButton');
+        const italicButton = document.getElementById('italicButton');
+        const underlineButton = document.getElementById('underlineButton');
+        const fontSizeButton = document.getElementById('fontSizeButton');
+        const fontColorButton = document.getElementById('fontColorButton');
+        const emojiButton = document.getElementById('emojiButton');
+        const linkButton = document.getElementById('linkButton');
+        const clearFormatButton = document.getElementById('clearFormatButton');
+        const insertImageButton = document.getElementById('insertImageButton');
+        const toggleHtmlButton = document.getElementById('toggleHtmlButton');
+        const previewButton = document.getElementById('previewButton');
+        const editor = document.getElementById('editor');
+        const htmlCode = document.getElementById('htmlCode');
+        const alignLeftButton = document.getElementById('alignLeftButton');
+        const alignCenterButton = document.getElementById('alignCenterButton');
+        const alignRightButton = document.getElementById('alignRightButton');
+        const bgColorButton = document.getElementById('bgColorButton');
+        const unorderedListButton = document.getElementById('unorderedListButton');
+        const orderedListButton = document.getElementById('orderedListButton');
+        const unlinkButton = document.getElementById('unlinkButton');
+        
+
+        // 按鈕事件監聽
+        bgColorButton.addEventListener('click', () => {
+            const bgColor = prompt('Enter background color (hex or name):', '');
+            if (bgColor) {
+                document.execCommand('hiliteColor', false, bgColor);
+            }
+        });
+
+        unorderedListButton.addEventListener('click', () => {
+            document.execCommand('insertUnorderedList', false, null);
+        });
+
+        orderedListButton.addEventListener('click', () => {
+            document.execCommand('insertOrderedList', false, null);
+        });
+
+        unlinkButton.addEventListener('click', () => {
+            document.execCommand('unlink', false, null);
+        });
+
+        alignLeftButton.addEventListener('click', () => {
+            document.execCommand('justifyLeft', false, null);
+        });
+
+        alignCenterButton.addEventListener('click', () => {
+            document.execCommand('justifyCenter', false, null);
+        });
+
+        alignRightButton.addEventListener('click', () => {
+            document.execCommand('justifyRight', false, null);
+        });
+        
+
+        boldButton.addEventListener('click', () => {
+            document.execCommand('bold', false, null);
+        });
+
+        italicButton.addEventListener('click', () => {
+            document.execCommand('italic', false, null);
+        });
+
+        underlineButton.addEventListener('click', () => {
+            document.execCommand('underline', false, null);
+        });
+
+        fontSizeButton.addEventListener('click', () => {
+            const fontSize = prompt('Enter font size (1-7):', '');
+            if (fontSize && fontSize >= 1 && fontSize <= 7) {
+                document.execCommand('fontSize', false, fontSize);
+            }
+        });
+
+        fontColorButton.addEventListener('click', () => {
+            const fontColor = prompt('Enter font color (hex or name):', '');
+            if (fontColor) {
+                document.execCommand('foreColor', false, fontColor);
+            }
+        });
+
+        emojiButton.addEventListener('click', () => {
+            editor.innerHTML += '😃';
+        });
+
+        linkButton.addEventListener('click', () => {
+            const url = prompt('Enter URL:', 'http://');
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+        });
+
+        clearFormatButton.addEventListener('click', () => {
+            document.execCommand('removeFormat', false, null);
+        });
+
+        insertImageButton.addEventListener('click', () => {
+            const imageUrl = prompt('Enter image URL:', '');
+            if (imageUrl) {
+                const imageHtml = `<img src="${imageUrl}" alt="Inserted Image" />`;
+                document.execCommand('insertHTML', false, imageHtml);
+            }
+        });
+
+        toggleHtmlButton.addEventListener('click', () => {
+            if (editor.style.display === 'none') {
+                editor.style.display = 'block';
+                htmlCode.style.display = 'none';
+                toggleHtmlButton.textContent = '顯示原始碼';
+            } else {
+                editor.style.display = 'none';
+                htmlCode.style.display = 'block';
+                toggleHtmlButton.textContent = '顯示編輯器';
+                htmlCode.value = editor.innerHTML;
+            }
+        });
+
+        previewButton.addEventListener('click', () => {
+            const previewContent = editor.innerHTML;
+            
+            const previewWindow = window.open('', '_blank');
+            previewWindow.document.write(`
+                <html>
+                <head>
+                    <title>預覽</title>
+                    <style>
+                        /* 樣式定義 */
+                    </style>
+                </head>
+                <body>
+                    ${previewContent}
+                </body>
+                </html>
+            `);
+        });
+
+        const colorCodesButton = document.getElementById('colorCodesButton');
+        
+        colorCodesButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            const colorCodes = [
+    "#000000", "#C0C0C0", "#FF0000", "#00FF00", "#0000FF", 
+    "#FFFF00", "#FF00FF", "#00FFFF", "#800000", "#008000", 
+    "#000080", "#808000", "#800080", "#008080", "#808080",
+    "#FFA500", "#FFC0CB", "#FFD700", "#7CFC00", "#FF4500", 
+    "#DA70D6", "#00CED1", "#9932CC", "#8A2BE2", "#9400D3", 
+    "#ADFF2F", "#20B2AA", "#FF69B4", "#DC143C", "#2E8B57", 
+    "#FF6347", "#F08080", "#FF8000", "#00FF7F", "#4169E1", 
+    "#8B4513", "#7FFF00", "#BA55D3", "#228B22", "#FF8C00", 
+    "#48D1CC", "#3CB371", "#A0522D", "#FA8072", "#6B8E23", 
+    "#FFDAB9", "#CD5C5C", "#F0E68C", "#ADD8E6", "#F5DEB3",
+    "#90EE90", "#D2B48C", "#FFFAF0", "#B0E0E6", "#32CD32",
+    "#66CDAA", "#B22222", "#FAFAD2", "#E9967A", "#FFDEAD", 
+    "#EEE8AA", "#98FB98", "#AFEEEE", "#DB7093", "#FFEFD5", "#FFB6C1",
+                // 添加更多顏色代碼...
+            ];
+            
+            const colorList = colorCodes.map(code => `<div style="background-color: ${code}; color: white; padding: 5px; margin: 2px; cursor: pointer;" onclick="applyColor('${code}')">${code}</div>`).join('');
+            
+            const colorCodesPopup = `
+                <div id="colorCodesPopup" style="position: absolute; top: 50px; left: 50px; background-color: white; padding: 10px; border: 1px solid #ccc;">
+                    <h3>所有顏色代碼：</h3>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        ${colorList}
+                    </div>
+                </div>
+            `;
+            
+            const existingPopup = document.getElementById('colorCodesPopup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+
+            document.body.insertAdjacentHTML('beforeend', colorCodesPopup);
+        });
+
+        function applyColor(color) {
+            document.execCommand('foreColor', false, color);
+            const popup = document.getElementById('colorCodesPopup');
+            if (popup) {
+                popup.remove();
+            }
+        }
+            
+        document.body.addEventListener('click', event => {
+            const popup = document.getElementById('colorCodesPopup');
+            if (popup && !event.target.closest('#colorCodesPopup')) {
+                popup.remove();
+            }
+        });
+    </script>
+</body>
+</html>
